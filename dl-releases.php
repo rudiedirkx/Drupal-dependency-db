@@ -1,12 +1,12 @@
 <?php
 
-require 'inc.config.php';
+require_once 'inc.config.php';
 
 // EXAMPLE
-// https://www.drupal.org/api-d7/node.json?type=project_release&sort=changed&direction=desc&field_release_build_type=static&limit=10
+// https://www.drupal.org/api-d7/node.json?type=project_release&sort=nid&direction=desc&field_release_build_type=static&limit=10
 
 $limit = 100;
-$_url = "https://www.drupal.org/api-d7/node.json?type=project_release&sort=changed&direction=desc&field_release_build_type=static&limit=$limit&page=";
+$_url = "https://www.drupal.org/api-d7/node.json?type=project_release&sort=nid&direction=desc&field_release_build_type=static&limit=$limit&page=";
 
 // Track `nid`
 // Check `field_release_version` for 7.x
@@ -103,8 +103,9 @@ while ( true ) {
 
 
 	// Next cycle, or finish
-	if ( $isLastPage || $pagesOfNothing >= 5 ) {
+	if ( $isLastPage || $pagesOfNothing >= 3 ) {
 		finish();
+		break;
 	}
 
 	echo "\n";

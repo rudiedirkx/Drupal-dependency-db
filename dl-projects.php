@@ -1,6 +1,6 @@
 <?php
 
-require 'inc.config.php';
+require_once 'inc.config.php';
 
 // EXAMPLE
 // https://www.drupal.org/api-d7/node.json?type=project_module&sort=nid&direction=desc&field_project_type=full&limit=10
@@ -63,6 +63,7 @@ while ( true ) {
 	// Next cycle, or finish
 	if ( $isLastPage || $pagesOfNothing >= 3 ) {
 		finish();
+		break;
 	}
 
 	echo "\n";

@@ -38,7 +38,7 @@ function download($url) {
 }
 
 function finish() {
-	exit("\nDone!\n");
+	echo "\nDone!\n\n\n\n";
 }
 
 function drupal_parse_info_format($data) {

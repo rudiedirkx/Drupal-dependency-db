@@ -1,6 +1,6 @@
 <?php
 
-require 'inc.config.php';
+require_once 'inc.config.php';
 
 $sql = "
 	SELECT p.project_name, r.*
@@ -86,3 +86,5 @@ foreach ($releases as $release) {
 	echo "\n";
 
 }
+
+finish();
