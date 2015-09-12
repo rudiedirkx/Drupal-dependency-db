@@ -69,6 +69,7 @@ foreach ($releases as $release) {
 			if ( isset($data['dependencies']) ) {
 				foreach ($data['dependencies'] as $dep_name) {
 					$db->insert('dependencies', array(
+						'project_name' => $release->project_name,
 						'module_name' => $module,
 						'dependency_module_name' => $dep_name,
 					));
