@@ -38,7 +38,9 @@ while ( true ) {
 	foreach ( $list as $project ) {
 		$name = $project['field_project_machine_name'];
 		$nid = $project['nid'];
+		$uid = @$project['author']['id'] ?: 0;
 		$created = $project['created'];
+		$downloads = @$project['field_download_count'] ?: 0;
 
 		if ( !isset($projects[$nid]) ) {
 			$new++;
@@ -48,6 +50,8 @@ while ( true ) {
 			$db->insert('projects', array(
 				'project_name' => $name,
 				'project_nid' => $nid,
+				'project_uid' => $uid,
+				'project_downloads' => $downloads,
 				'created' => $created,
 				'downloaded' => time(),
 			));
