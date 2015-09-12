@@ -81,7 +81,8 @@ while ( true ) {
 				$new++;
 				echo "  - $title\n";
 
-				$db->insert('releases', compact('release_nid', 'project_nid', 'release_version', 'title', 'created', 'changed', 'dev'));
+				$downloaded_when = time();
+				$db->insert('releases', compact('release_nid', 'project_nid', 'release_version', 'title', 'created', 'changed', 'dev', 'downloaded_when'));
 				$releases[$release_nid] = $release_nid;
 
 				// And remove the older release, because we now have a more recent version

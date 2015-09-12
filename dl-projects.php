@@ -42,10 +42,14 @@ while ( true ) {
 
 		if ( !isset($projects[$nid]) ) {
 			$new++;
+
+			echo "  - $name ($nid)\n";
+
 			$db->insert('projects', array(
 				'project_name' => $name,
 				'project_nid' => $nid,
 				'created' => $created,
+				'downloaded' => time(),
 			));
 		}
 	}

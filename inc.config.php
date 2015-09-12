@@ -26,10 +26,6 @@ $context = stream_context_create(array(
 require '../../inc/db/db_sqlite.php';
 $db = db_sqlite::open(array('database' => 'db/drupaldeps.sqlite3'));
 
-// Screw ACID, go SPEED!
-$db->execute('PRAGMA synchronous=OFF');
-$db->execute('PRAGMA journal_mode=OFF');
-
 
 
 function download($url) {
