@@ -45,7 +45,7 @@ while ( true ) {
 		if ( !isset($projects[$nid]) ) {
 			$new++;
 
-			echo "  - $name ($nid)\n";
+			echo "  - $name ($nid) - https://www.drupal.org/project/$name\n";
 
 			$db->insert('projects', array(
 				'project_name' => $name,
