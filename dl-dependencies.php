@@ -65,14 +65,19 @@ foreach ($releases as $release) {
 			$info = $zip->getFromIndex($i);
 			$data = drupal_parse_info_format($info);
 
-			$depsFrom[$module] = array();
 			if ( isset($data['dependencies']) ) {
-				foreach ($data['dependencies'] as $dep_name) {
-					$db->insert('dependencies', array(
-						'project_name' => $release->project_name,
-						'module_name' => $module,
-						'dependency_module_name' => $dep_name,
-					));
+				foreach ($data['dependencies'] as $dependency) {
+					$dependency = drupal_parse_dependency($dependency);
+
+					if (isset($dependency['name'])) {
+						$db->insert('dependencies', array(
+							'project_name' => $release->project_name,
+							'module_name' => $module,
+							'dependency_project_name' => @$dependency['project'] ?: '',
+							'dependency_module_name' => $dependency['name'],
+							'dependency_versions' => trim(@$dependency['original_version'], "\t )("),
+						));
+					}
 				}
 			}
 		}
