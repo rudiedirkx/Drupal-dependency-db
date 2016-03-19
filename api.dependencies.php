@@ -10,7 +10,7 @@ $dependencies = $db->fetch("
 	SELECT
 		d.dependency_module_name,
 		d.dependency_project_name,
-		(SELECT COUNT(1) FROM modules WHERE module_name = d.dependency_module_name) AS found_projects,
+		(SELECT COUNT(DISTINCT module_name) FROM modules WHERE module_name = d.dependency_module_name) AS found_projects,
 		(SELECT project_name FROM modules WHERE module_name = d.dependency_module_name) AS found_project,
 		(SELECT COUNT(1) FROM projects WHERE project_name = d.dependency_module_name) AS project_literal
 	FROM dependencies d
