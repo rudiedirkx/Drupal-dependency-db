@@ -19,16 +19,39 @@ $dependencies = $db->fetch("
 	ORDER BY d.dependency_module_name
 ", array($_GET['project']))->all();
 
-$modules = array_map(function($dep) {
+$dependees = $db->fetch("
+	SELECT
+		d.module_name,
+		d.project_name,
+		(SELECT COUNT(DISTINCT module_name) FROM modules WHERE module_name = d.module_name) AS found_projects,
+		(SELECT project_name FROM modules WHERE module_name = d.module_name) AS found_project,
+		(SELECT COUNT(1) FROM projects WHERE project_name = d.dependency_module_name) AS project_literal
+	FROM dependencies d
+	WHERE d.dependency_module_name = ? AND project_name <> d.dependency_module_name
+	GROUP BY d.module_name
+	HAVING found_project <> d.dependency_module_name
+	ORDER BY d.module_name
+", array($_GET['project']))->all();
+
+$dependencies = array_map(function($dep) {
 	return array(
 		'module' => $dep->dependency_module_name,
-		'projects' => (int) $dep->found_projects,
 		'project' => $dep->dependency_project_name ?: ($dep->found_projects == 1 ? $dep->found_project : null),
+		'projects' => (int) $dep->found_projects,
 		'project_literal' => (bool) $dep->project_literal,
 	);
 }, $dependencies);
 
-$json = json_encode($modules);
+$dependees = array_map(function($dep) {
+	return array(
+		'module' => $dep->module_name,
+		'project' => $dep->project_name ?: ($dep->found_projects == 1 ? $dep->found_project : null),
+		'projects' => (int) $dep->found_projects,
+		'project_literal' => (bool) $dep->project_literal,
+	);
+}, $dependees);
+
+$json = json_encode(compact('dependencies', 'dependees'));
 
 if ( !empty($_GET['jsonp']) ) {
 	header('Content-type: text/javascript; charset=utf-8');
