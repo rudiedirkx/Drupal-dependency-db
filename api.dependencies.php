@@ -7,49 +7,18 @@ if ( empty($_GET['project']) ) {
 }
 
 $dependencies = $db->fetch("
-	SELECT
-		d.dependency_module_name,
-		d.dependency_project_name,
-		(SELECT COUNT(DISTINCT module_name) FROM modules WHERE module_name = d.dependency_module_name) AS found_projects,
-		(SELECT project_name FROM modules WHERE module_name = d.dependency_module_name) AS found_project,
-		(SELECT COUNT(1) FROM projects WHERE project_name = d.dependency_module_name) AS project_literal
+	SELECT DISTINCT dependency_module_name
 	FROM dependencies d
-	JOIN modules m ON m.module_name = d.module_name AND m.project_name = ?
-	GROUP BY d.dependency_module_name
-	ORDER BY d.dependency_module_name
-", array($_GET['project']))->all();
+	WHERE module_name = ? AND dependency_project_name <> module_name
+	ORDER BY dependency_module_name
+", array($_GET['project']))->fields('dependency_module_name');
 
 $dependees = $db->fetch("
-	SELECT
-		d.module_name,
-		d.project_name,
-		(SELECT COUNT(DISTINCT module_name) FROM modules WHERE module_name = d.module_name) AS found_projects,
-		(SELECT project_name FROM modules WHERE module_name = d.module_name) AS found_project,
-		(SELECT COUNT(1) FROM projects WHERE project_name = d.dependency_module_name) AS project_literal
+	SELECT DISTINCT module_name
 	FROM dependencies d
-	WHERE d.dependency_module_name = ? AND project_name <> d.dependency_module_name
-	GROUP BY d.module_name
-	HAVING found_project <> d.dependency_module_name
-	ORDER BY d.module_name
-", array($_GET['project']))->all();
-
-$dependencies = array_map(function($dep) {
-	return array(
-		'module' => $dep->dependency_module_name,
-		'project' => $dep->dependency_project_name ?: ($dep->found_projects == 1 ? $dep->found_project : null),
-		'projects' => (int) $dep->found_projects,
-		'project_literal' => (bool) $dep->project_literal,
-	);
-}, $dependencies);
-
-$dependees = array_map(function($dep) {
-	return array(
-		'module' => $dep->module_name,
-		'project' => $dep->project_name ?: ($dep->found_projects == 1 ? $dep->found_project : null),
-		'projects' => (int) $dep->found_projects,
-		'project_literal' => (bool) $dep->project_literal,
-	);
-}, $dependees);
+	WHERE dependency_module_name = ? AND project_name <> dependency_module_name
+	ORDER BY module_name
+", array($_GET['project']))->fields('module_name');
 
 $json = json_encode(compact('dependencies', 'dependees'));
 
